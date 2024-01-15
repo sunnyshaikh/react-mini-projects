@@ -6,10 +6,9 @@ const App = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    console.log("val", value)
+    alert("Otp: " + value)
   }
 
-  console.log(value)
 
   return (
     <main className="app">
@@ -45,7 +44,7 @@ const OtpInput: React.FC<TOtpInputProps> = ({ length, setValue }) => {
     setOtp(newOtp)
 
     //move to next cell
-    if (value && index < otp.length - 1 && inputRefs.current[index + 1]) {
+    if (value && index < length - 1 && inputRefs.current[index + 1]) {
       inputRefs.current[index + 1].focus()
     }
 
@@ -53,6 +52,20 @@ const OtpInput: React.FC<TOtpInputProps> = ({ length, setValue }) => {
     setValue(joinedOtp)
     setIsDisabledBtn(joinedOtp.length === length ? false : true)
 
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+    //move backward on backspace
+    if (e.key.toLowerCase() !== "backspace") return
+
+    if (!otp[index] && index > 0 && inputRefs.current[index - 1]) {
+      inputRefs.current[index - 1].focus()
+    }
+  }
+
+  //set cursor to end
+  const handleClick = (index: number) => {
+    inputRefs.current[index].setSelectionRange(1, 1)
   }
 
   //focus on first input initially
@@ -73,6 +86,8 @@ const OtpInput: React.FC<TOtpInputProps> = ({ length, setValue }) => {
               type="text"
               value={value}
               onChange={(e) => handleChange(e, index)}
+              onKeyDown={(e) => handleKeyDown(e, index)}
+              onClick={() => handleClick(index)}
               className="input"
             />
           ))
